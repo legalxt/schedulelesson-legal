@@ -46,10 +46,6 @@
 
       var target = 'schedulelesson://auth-callback?token_hash=' + encodeURIComponent(tokenHash) + '&type=recovery';
       btn.setAttribute('href', target);
-
-      // Пробуем открыть апку сразу (Safari покажет системный запрос);
-      // кнопка остаётся как явный фолбэк
-      setTimeout(function () { window.location.href = target; }, 500);
     })();
   </script>
 </body>
