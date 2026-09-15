@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule Lesson — планувальник для репетиторів</title>
+<meta name="description" content="Розклад, учні, абонементи та оплати в одному застосунку. Скоро в App Store.">
+<meta property="og:title" content="Schedule Lesson — планувальник для репетиторів">
+<meta property="og:description" content="Розклад, учні, абонементи та оплати в одному застосунку. Скоро в App Store.">
+<meta property="og:image" content="https://legalxt.github.io/schedulelesson-legal/app-schedule.jpg">
+<style>
+  :root {
+    --bg: #0c0a18; --card: rgba(255,255,255,.05); --line: rgba(255,255,255,.12);
+    --ink: #f4f2fb; --muted: rgba(244,242,251,.62);
+    --purple: #8b5cf6; --cyan: #22d3ee; --mint: #34d399;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(120% 80% at 15% 0%, #2a1f4d 0%, #16122c 45%, var(--bg) 100%);
+    color: var(--ink); line-height: 1.6; min-height: 100vh;
+    padding: 40px 20px 64px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700;
+    color: var(--cyan); background: rgba(34,211,238,.10); border: 1px solid rgba(34,211,238,.35);
+    padding: 6px 13px; border-radius: 999px; letter-spacing: .3px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  h1 { font-size: clamp(30px, 6vw, 48px); line-height: 1.15; margin: 20px 0 14px; letter-spacing: -.5px; }
+  h1 span { background: linear-gradient(100deg, var(--purple), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { font-size: clamp(16px, 2.4vw, 19px); color: var(--muted); max-width: 560px; }
+  .hero { display: grid; grid-template-columns: 1fr; gap: 36px; align-items: center; margin-top: 34px; }
+  @media (min-width: 860px) { .hero { grid-template-columns: 1.15fr .85fr; gap: 48px; } }
+  .shot { width: 100%; max-width: 300px; border-radius: 26px; border: 1px solid var(--line); box-shadow: 0 30px 70px rgba(0,0,0,.55); display: block; margin: 0 auto; }
+  form { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; max-width: 520px; }
+  input[type=email] {
+    flex: 1 1 240px; min-width: 0; padding: 15px 16px; font-size: 16px; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-family: inherit;
+  }
+  input[type=email]:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(139,92,246,.25); }
+  button {
+    padding: 15px 26px; font-size: 16px; font-weight: 700; color: #fff; font-family: inherit;
+    background: linear-gradient(100deg, var(--purple), var(--cyan)); border: 0; border-radius: 14px; cursor: pointer;
+    box-shadow: 0 10px 26px rgba(139,92,246,.4);
+  }
+  button:disabled { opacity: .6; cursor: default; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .msg { margin-top: 14px; font-size: 15px; font-weight: 600; display: none; }
+  .msg.ok { color: var(--mint); display: block; }
+  .msg.err { color: #f87171; display: block; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 56px; }
+  .f { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+  .f h3 { font-size: 15px; margin-bottom: 6px; }
+  .f p { font-size: 14px; color: var(--muted); }
+  .f .ic { font-size: 20px; display: block; margin-bottom: 10px; }
+  footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  footer a { color: var(--muted); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- UK -->
+  <div id="uk">
+    <span class="badge"><span class="dot"></span>СКОРО В APP STORE</span>
+    <div class="hero">
+      <div>
+        <h1>Розклад, учні та оплати — <span>в одному застосунку</span></h1>
+        <p class="lead">Schedule Lesson веде облік за вас: хто коли приходить, скільки занять лишилося в абонементі, хто ще не заплатив і скільки ви заробили цього місяця.</p>
+        <form id="form-uk">
+          <input type="email" name="email" placeholder="ваш email" required autocomplete="email">
+          <button type="submit">Повідомити про запуск</button>
+        </form>
+        <p class="note">Напишемо один раз — коли застосунок з'явиться в App Store. Без розсилок і спаму.</p>
+        <p class="msg" id="msg-uk"></p>
+      </div>
+      <img class="shot" src="app-schedule.jpg" alt="Екран розкладу Schedule Lesson">
+    </div>
+    <div class="features">
+      <div class="f"><span class="ic">📅</span><h3>Тиждень одним поглядом</h3><p>Найближчий урок із відліком, позначка «проведено» в один дотик.</p></div>
+      <div class="f"><span class="ic">💸</span><h3>Ніяких забутих оплат</h3><p>Видно, хто винен гроші. Нагадування батькам — готовим текстом.</p></div>
+      <div class="f"><span class="ic">✨</span><h3>AI-помічник</h3><p>«Хто мені винен?», «постав Ані урок у вівторок» — текстом або голосом.</p></div>
+      <div class="f"><span class="ic">🔒</span><h3>Урок на екрані блокування</h3><p>Живий таймер заняття і позначка про проведений урок без відкриття застосунку.</p></div>
+    </div>
+  </div>
+
+  <!-- RU -->
+  <div id="ru" hidden>
+    <span class="badge"><span class="dot"></span>СКОРО В APP STORE</span>
+    <div class="hero">
+      <div>
+        <h1>Расписание, ученики и оплаты — <span>в одном приложении</span></h1>
+        <p class="lead">Schedule Lesson ведёт учёт за вас: кто когда приходит, сколько занятий осталось в абонементе, кто ещё не заплатил и сколько вы заработали в этом месяце.</p>
+        <form id="form-ru">
+          <input type="email" name="email" placeholder="ваш email" required autocomplete="email">
+          <button type="submit">Сообщить о запуске</button>
+        </form>
+        <p class="note">Напишем один раз — когда приложение появится в App Store. Без рассылок и спама.</p>
+        <p class="msg" id="msg-ru"></p>
+      </div>
+      <img class="shot" src="app-schedule.jpg" alt="Экран расписания Schedule Lesson">
+    </div>
+    <div class="features">
+      <div class="f"><span class="ic">📅</span><h3>Неделя одним взглядом</h3><p>Ближайший урок с отсчётом, отметка «проведён» в одно касание.</p></div>
+      <div class="f"><span class="ic">💸</span><h3>Никаких забытых оплат</h3><p>Видно, кто должен деньги. Напоминание родителям — готовым текстом.</p></div>
+      <div class="f"><span class="ic">✨</span><h3>AI-помощник</h3><p>«Кто мне должен?», «поставь Ане урок во вторник» — текстом или голосом.</p></div>
+      <div class="f"><span class="ic">🔒</span><h3>Урок на экране блокировки</h3><p>Живой таймер занятия и отметка о проведённом уроке без открытия приложения.</p></div>
+    </div>
+  </div>
+
+  <!-- EN -->
+  <div id="en" hidden>
+    <span class="badge"><span class="dot"></span>COMING TO THE APP STORE</span>
+    <div class="hero">
+      <div>
+        <h1>Schedule, students and payments — <span>in one app</span></h1>
+        <p class="lead">Schedule Lesson keeps track for you: who comes when, how many lessons are left on a pass, who hasn't paid yet and how much you earned this month.</p>
+        <form id="form-en">
+          <input type="email" name="email" placeholder="your email" required autocomplete="email">
+          <button type="submit">Notify me at launch</button>
+        </form>
+        <p class="note">One email — when the app goes live. No newsletters, no spam.</p>
+        <p class="msg" id="msg-en"></p>
+      </div>
+      <img class="shot" src="app-schedule.jpg" alt="Schedule Lesson schedule screen">
+    </div>
+    <div class="features">
+      <div class="f"><span class="ic">📅</span><h3>The week at a glance</h3><p>Next lesson with a countdown, one-tap check-off.</p></div>
+      <div class="f"><span class="ic">💸</span><h3>No forgotten payments</h3><p>See who owes you. Parent reminders come as ready-made text.</p></div>
+      <div class="f"><span class="ic">✨</span><h3>AI assistant</h3><p>"Who owes me?", "book Anna on Tuesday" — by text or voice.</p></div>
+      <div class="f"><span class="ic">🔒</span><h3>Lesson on the Lock Screen</h3><p>A live lesson timer and check-off without opening the app.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Schedule Lesson · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="support.html">Support</a> · <a href="mailto:supportschedulelesson@gmail.com">supportschedulelesson@gmail.com</a></p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var SUPABASE_URL = 'https://emokbyrswsvkkapiytmv.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_184qEnktJDgn3LYQLrrkyQ_mghWzDpd';
+
+  var lang = (navigator.language || 'uk').slice(0, 2).toLowerCase();
+  if (lang !== 'ru' && lang !== 'en') { lang = 'uk'; }
+  ['uk', 'ru', 'en'].forEach(function (code) {
+    document.getElementById(code).hidden = code !== lang;
+  });
+  document.documentElement.lang = lang;
+
+  var texts = {
+    uk: { ok: 'Готово! Напишемо, щойно застосунок вийде.', dup: 'Ви вже в списку — до зустрічі на запуску!', err: 'Не вдалося зберегти. Спробуйте ще раз.' },
+    ru: { ok: 'Готово! Напишем, как только приложение выйдет.', dup: 'Вы уже в списке — до встречи на запуске!', err: 'Не удалось сохранить. Попробуйте ещё раз.' },
+    en: { ok: "You're in! We'll email you at launch.", dup: "You're already on the list — see you at launch!", err: 'Could not save. Please try again.' }
+  };
+
+  var form = document.getElementById('form-' + lang);
+  var msg = document.getElementById('msg-' + lang);
+  if (!form) { return; }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var button = form.querySelector('button');
+    var email = form.querySelector('input[type=email]').value.trim();
+    if (!email) { return; }
+
+    button.disabled = true;
+    msg.className = 'msg';
+    msg.textContent = '';
+
+    fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_KEY,
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ email: email, locale: lang, source: 'landing' })
+    }).then(function (response) {
+      if (response.ok) {
+        msg.className = 'msg ok';
+        msg.textContent = texts[lang].ok;
+        form.reset();
+      } else if (response.status === 409) {
+        msg.className = 'msg ok';
+        msg.textContent = texts[lang].dup;
+        form.reset();
+      } else {
+        throw new Error(String(response.status));
+      }
+    }).catch(function () {
+      msg.className = 'msg err';
+      msg.textContent = texts[lang].err;
+    }).then(function () {
+      button.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
