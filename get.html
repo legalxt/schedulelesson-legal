@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule Lesson</title>
+<script>
+  // Когда апка появится в App Store — вписать сюда ссылку вида
+  // https://apps.apple.com/app/id0000000000 и страница станет редиректом
+  const APPSTORE_URL = "";
+  if (APPSTORE_URL) {
+    location.replace(APPSTORE_URL);
+  }
+</script>
+<style>
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #17102e 0%, #10142c 45%, #0b1c2a 100%);
+    font-family: -apple-system, "SF Pro Display", system-ui, sans-serif; color: #fff;
+    padding: 24px; box-sizing: border-box; text-align: center;
+  }
+  .card {
+    max-width: 380px; padding: 36px 28px; border-radius: 24px;
+    background: rgba(255,255,255,0.055); border: 1px solid rgba(158,115,250,0.4);
+  }
+  .logo { font-size: 52px; margin-bottom: 10px; }
+  h1 { font-size: 24px; margin: 0 0 8px; }
+  p { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.45; margin: 0 0 18px; }
+  .chip {
+    display: inline-block; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    color: #B9A6F7; background: rgba(158,115,250,0.16); border: 1px solid rgba(158,115,250,0.4);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">📅</div>
+    <h1>Schedule Lesson</h1>
+    <p>Планировщик для репетиторов: ученики, расписание, оплаты и напоминания.</p>
+    <p>Введи инвайт-код от коллеги при регистрации — и получи стартовый бонус.</p>
+    <div class="chip">Скоро в App Store</div>
+  </div>
+</body>
+</html>
