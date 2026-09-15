@@ -6,11 +6,9 @@
 <title>Schedule Lesson</title>
 <script>
   // Когда апка появится в App Store — вписать сюда ссылку вида
-  // https://apps.apple.com/app/id0000000000 и страница станет редиректом
+  // https://apps.apple.com/app/id0000000000 и кнопка поведёт в стор,
+  // а страница без ?code= станет мгновенным редиректом
   const APPSTORE_URL = "";
-  if (APPSTORE_URL) {
-    location.replace(APPSTORE_URL);
-  }
 </script>
 <style>
   body {
@@ -20,12 +18,24 @@
     padding: 24px; box-sizing: border-box; text-align: center;
   }
   .card {
-    max-width: 380px; padding: 36px 28px; border-radius: 24px;
+    max-width: 380px; padding: 34px 26px; border-radius: 24px;
     background: rgba(255,255,255,0.055); border: 1px solid rgba(158,115,250,0.4);
   }
-  .logo { font-size: 52px; margin-bottom: 10px; }
+  .logo { font-size: 50px; margin-bottom: 8px; }
   h1 { font-size: 24px; margin: 0 0 8px; }
-  p { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.45; margin: 0 0 18px; }
+  p { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.45; margin: 0 0 16px; }
+  .code-box {
+    display: none; margin: 0 0 6px; padding: 14px; border-radius: 14px; cursor: pointer;
+    border: 1.5px dashed rgba(158,115,250,0.8); background: rgba(255,255,255,0.06);
+    font-size: 26px; font-weight: 800; letter-spacing: 6px; color: #C5B1FC;
+  }
+  .code-hint { display: none; color: rgba(255,255,255,0.45); font-size: 12px; margin-bottom: 16px; }
+  .btn {
+    display: inline-block; padding: 13px 26px; border-radius: 14px; font-size: 15px; font-weight: 700;
+    color: #fff; text-decoration: none; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #9E73FA, #40C7EB);
+    box-shadow: 0 8px 24px rgba(158,115,250,0.4);
+  }
   .chip {
     display: inline-block; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700;
     color: #B9A6F7; background: rgba(158,115,250,0.16); border: 1px solid rgba(158,115,250,0.4);
@@ -37,8 +47,40 @@
     <div class="logo">📅</div>
     <h1>Schedule Lesson</h1>
     <p>Планировщик для репетиторов: ученики, расписание, оплаты и напоминания.</p>
-    <p>Введи инвайт-код от коллеги при регистрации — и получи стартовый бонус.</p>
-    <div class="chip">Скоро в App Store</div>
+    <p id="bonus-line" style="display:none">Тебе подарили <b style="color:#7BE3A8">+50 тайм-коинов</b> 🎁 Твой инвайт-код:</p>
+    <div class="code-box" id="code-box" title="Скопировать">······</div>
+    <div class="code-hint" id="code-hint">тап — скопировать · введи его в апке: Настройки → Кошелёк</div>
+    <a class="btn" id="download-btn" style="display:none" href="#">Скачать в App Store</a>
+    <div class="chip" id="soon-chip">Скоро в App Store</div>
   </div>
+<script>
+  const code = (new URLSearchParams(location.search).get("code") || "")
+    .toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+
+  if (code) {
+    document.getElementById("bonus-line").style.display = "block";
+    const box = document.getElementById("code-box");
+    const hint = document.getElementById("code-hint");
+    box.textContent = code;
+    box.style.display = "block";
+    hint.style.display = "block";
+    box.addEventListener("click", () => {
+      navigator.clipboard?.writeText(code).then(() => {
+        hint.textContent = "Скопировано ✓ — вставь его в апке: Настройки → Кошелёк";
+      });
+    });
+  }
+
+  if (APPSTORE_URL) {
+    if (!code) {
+      // Без кода страница — чистый редирект в стор
+      location.replace(APPSTORE_URL);
+    }
+    const btn = document.getElementById("download-btn");
+    btn.href = APPSTORE_URL;
+    btn.style.display = "inline-block";
+    document.getElementById("soon-chip").style.display = "none";
+  }
+</script>
 </body>
 </html>
