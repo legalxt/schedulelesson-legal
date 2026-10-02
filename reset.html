@@ -16,6 +16,7 @@
     color: #fff; border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 16px;
     box-shadow: 0 10px 24px rgba(124,58,237,.35); }
   .hint { font-size: 12px; color: #8d88a3; margin-top: 18px; }
+  a.btn.busy { opacity: .6; pointer-events: none; }
   .error { color: #c73c3c; font-weight: 600; }
   @media (prefers-color-scheme: dark) {
     body { background: linear-gradient(160deg, #221c33, #1b2030 60%, #16232b); color: #f0eff6; }
@@ -32,20 +33,108 @@
     <div class="hint" id="hint">Кнопка работает на iPhone с установленным приложением.<br>Works on the iPhone with the app installed.</div>
   </div>
   <script>
+    // Токен из письма проверяем здесь, по нажатию кнопки, а не в приложении:
+    // запрос из Safari надёжен, а приложению остаётся готовая сессия (как
+    // в стандартной ссылке Supabase). По загрузке страницы ничего не
+    // отправляем — почтовые сканеры открывают ссылки, но не нажимают кнопки
     (function () {
+      var SUPABASE_URL = 'https://emokbyrswsvkkapiytmv.supabase.co';
+      // Публичный ключ, как в приложении; доступ к данным ограничивает RLS
+      var SUPABASE_KEY = 'sb_publishable_184qEnktJDgn3LYQLrrkyQ_mghWzDpd';
+
       var params = new URLSearchParams(location.search);
       var tokenHash = params.get('token_hash');
       var btn = document.getElementById('openBtn');
+      var msg = document.getElementById('msg');
+      var hint = document.getElementById('hint');
+      var LABEL = 'Открыть приложение / Open the app';
+
+      function fail(html, keepButton) {
+        msg.innerHTML = '<span class="error">' + html + '</span>';
+        btn.classList.remove('busy');
+        btn.textContent = LABEL;
+        if (!keepButton) {
+          btn.style.display = 'none';
+        }
+      }
 
       if (!tokenHash) {
-        document.getElementById('msg').innerHTML =
-          '<span class="error">Ссылка неполная — запроси сброс пароля в приложении ещё раз.<br>The link is incomplete — request a new reset in the app.</span>';
-        btn.style.display = 'none';
+        fail('Ссылка неполная — запроси сброс пароля в приложении ещё раз.<br>The link is incomplete — request a new reset in the app.');
         return;
       }
 
-      var target = 'schedulelesson://auth-callback?token_hash=' + encodeURIComponent(tokenHash) + '&type=recovery';
-      btn.setAttribute('href', target);
+      // Приложение есть только на iPhone и iPad. На компьютере не тратим
+      // одноразовую ссылку впустую
+      var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (!isIOS) {
+        fail('Открой это письмо на iPhone, где установлено приложение Schedule Lesson.<br>Open this email on the iPhone with the Schedule Lesson app installed.');
+        hint.style.display = 'none';
+        return;
+      }
+
+      var appURL = null;
+      var busy = false;
+
+      btn.addEventListener('click', function (event) {
+        // Сессия уже получена — ссылка кнопки ведёт прямо в приложение
+        if (appURL) {
+          return;
+        }
+        event.preventDefault();
+        if (busy) {
+          return;
+        }
+        busy = true;
+        btn.classList.add('busy');
+        btn.textContent = 'Проверяем ссылку… / Checking the link…';
+
+        fetch(SUPABASE_URL + '/auth/v1/verify', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'recovery', token_hash: tokenHash })
+        })
+          .then(function (response) {
+            return response.json().catch(function () { return {}; }).then(function (body) {
+              return { ok: response.ok, status: response.status, body: body };
+            });
+          })
+          .then(function (result) {
+            busy = false;
+            var body = result.body || {};
+            if (result.ok && body.access_token && body.refresh_token) {
+              var expiresIn = body.expires_in || 3600;
+              var expiresAt = body.expires_at || Math.floor(Date.now() / 1000) + expiresIn;
+              // Формат стандартной ссылки Supabase: приложение разбирает его
+              // через auth.session(from:) и открывает экран нового пароля
+              appURL = 'schedulelesson://auth-callback#' + [
+                'access_token=' + encodeURIComponent(body.access_token),
+                'expires_in=' + encodeURIComponent(expiresIn),
+                'expires_at=' + encodeURIComponent(expiresAt),
+                'refresh_token=' + encodeURIComponent(body.refresh_token),
+                'token_type=' + encodeURIComponent(body.token_type || 'bearer'),
+                'type=recovery'
+              ].join('&');
+              btn.setAttribute('href', appURL);
+              btn.classList.remove('busy');
+              btn.textContent = LABEL;
+              msg.innerHTML = 'Ссылка подтверждена — открываем приложение.<br>Link confirmed — opening the app.';
+              hint.innerHTML = 'Если приложение не открылось, нажми кнопку ещё раз.<br>If the app didn’t open, tap the button again.';
+              location.href = appURL;
+              return;
+            }
+            var code = body.error_code || '';
+            if (result.status === 403 || code === 'otp_expired' || code === 'otp_disabled') {
+              fail('Ссылка устарела или уже использована. Запроси новую в приложении: «Забыли пароль?».<br>This link has expired or was already used. Request a new one in the app: “Forgot password?”.');
+              return;
+            }
+            fail('Не получилось проверить ссылку. Нажми кнопку ещё раз.<br>Couldn’t check the link. Tap the button again.', true);
+          })
+          .catch(function () {
+            busy = false;
+            fail('Нет связи с сервером — проверь интернет и нажми кнопку ещё раз.<br>Can’t reach the server — check your connection and tap the button again.', true);
+          });
+      });
     })();
   </script>
 </body>
